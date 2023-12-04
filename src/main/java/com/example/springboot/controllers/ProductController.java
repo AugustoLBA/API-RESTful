@@ -1,5 +1,6 @@
 package com.example.springboot.controllers;
 
+import ch.qos.logback.core.boolex.EvaluationException;
 import com.example.springboot.dto.ProductRecordDto;
 import com.example.springboot.models.ProductModel;
 import com.example.springboot.repositories.ProductRepository;
@@ -11,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 public class ProductController {
@@ -30,5 +33,13 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(productRepository.findAll());
     }
 
+    @GetMapping("/products/{id}")
+    public ResponseEntity<Object> getOneProduct(@PathVariable(value="id") UUID id){
+        Optional<ProductModel> productO = productRepository.findById(id);
+        if(productO.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found.");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(productO.get());
+    }
 
 }
